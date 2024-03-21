@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerService } from './swagger/swagger.service';
+import { SwaggerService } from './common/modules/swagger/swagger.service';
+
+const ROUTE_PATH_PREFIX = '/v1/api';
 
 const validationPipe = new ValidationPipe({
   whitelist: true,
@@ -13,7 +15,11 @@ async function bootstrap() {
 
   SwaggerService.setup(app);
 
-  await app.useGlobalPipes(validationPipe).listen(3333);
+  app.enableCors();
+  app.setGlobalPrefix(ROUTE_PATH_PREFIX);
+  app.useGlobalPipes(validationPipe);
+
+  await app.listen(3333);
 }
 
 bootstrap();
